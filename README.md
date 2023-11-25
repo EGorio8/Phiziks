@@ -8,20 +8,30 @@
 
 чат
 
-image: docker:stable
-
 stages:
   - build
+  - deploy
 
 variables:
   DOCKER_DRIVER: overlay2
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
 
-services:
-  - docker:dind
+before_script:
+  - apt-get update -qy
+  - apt-get install -y python3-tk xauth
 
 build:
   stage: build
   script:
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt  # Если у вас есть файл с зависимостями
+    - python main.py
+
+deploy:
+  stage: deploy
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+    - docker run --rm $CONTAINER_TEST_IMAGE  # Запустите тесты в контейнере
