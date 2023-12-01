@@ -11,6 +11,10 @@
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 
 
+This job is stuck because the project doesn't have any runners online assigned to it.
+Go to project CI settings
+
+
 stages:
   - build
   - deploy
