@@ -13,25 +13,19 @@ stages:
   - deploy
 
 variables:
-  DOCKER_DRIVER: overlay2
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  DOCKER_IMAGE_NAME: phiz
+  DOCKER_REGISTRY: registry.gitlab.com
+  DOCKER_IMAGE_TAG: latest
 
 before_script:
-  - apt-get update -qy
-  - apt-get install -y python3-tk xauth
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $DOCKER_REGISTRY
 
 build:
   stage: build
   script:
-    - python3 -m venv venv
-    - source venv/bin/activate
-    - pip install -r requirements.txt  # Если у вас есть файл с зависимостями
-    - python main.py
+    - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_NAMESPACE/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .
 
 deploy:
   stage: deploy
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-    - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
-    - docker run --rm $CONTAINER_TEST_IMAGE  # Запустите тесты в контейнере
+    - sudo docker run -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm $DOCKER_REGISTRY/$CI_PROJECT_NAMESPACE/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
