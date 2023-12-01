@@ -8,6 +8,14 @@
 
 чат
 
+Running with gitlab-runner 16.6.1 (f5da3c5a)
+  on 1 Sze9i6yxn, system ID: s_6ea0a7daf4dd
+Preparing the "docker" executor 00:03
+Using Docker executor with image phiz ...
+Pulling docker image phiz ...
+WARNING: Failed to pull image with policy "always": Error response from daemon: pull access denied for phiz, repository does not exist or may require 'docker login': denied: requested access to the resource is denied (manager.go:250:1s)
+ERROR: Job failed: failed to pull image "phiz" with specified policies [always]: Error response from daemon: pull access denied for phiz, repository does not exist or may require 'docker login': denied: requested access to the resource is denied (manager.go:250:1s)
+
 Enter an executor: ssh, virtualbox, docker+machine, kubernetes, shell, docker-autoscaler, instance, custom, docker, docker-windows, parallels:
 
 
