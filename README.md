@@ -8,6 +8,9 @@
 
 чат
 
+Enter an executor: ssh, virtualbox, docker+machine, kubernetes, shell, docker-autoscaler, instance, custom, docker, docker-windows, parallels:
+
+
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 
 
