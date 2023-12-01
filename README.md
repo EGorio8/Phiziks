@@ -36,7 +36,7 @@ variables:
   DOCKER_IMAGE_TAG: latest
 
 before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $DOCKER_REGISTRY
+  - docker login -u $CI_JOB_TOKEN -p $CI_JOB_TOKEN $DOCKER_REGISTRY
 
 build:
   stage: build
