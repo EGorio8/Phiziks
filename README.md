@@ -8,6 +8,9 @@
 
 чат
 
+_tkinter.TclError: couldn't connect to display ":0" ERROR: Job 
+
+
 Running with gitlab-runner 16.6.1 (f5da3c5a)
   on 1 Sze9i6yxn, system ID: s_6ea0a7daf4dd
 Preparing the "docker" executor 00:03
