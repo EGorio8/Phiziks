@@ -24,26 +24,29 @@ curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/sc
 
 This job is stuck because the project doesn't have any runners online assigned to it.
 Go to project CI settings
-
-
 stages:
   - build
   - deploy
 
 variables:
-  DOCKER_IMAGE_NAME: phiz
-  DOCKER_REGISTRY: registry.gitlab.com
-  DOCKER_IMAGE_TAG: latest
+  DOCKER_DRIVER: overlay2
 
 before_script:
-  - docker login -u $CI_JOB_TOKEN -p $CI_JOB_TOKEN $DOCKER_REGISTRY
+  - apt-get update -qy
+  - apt-get install -y docker.io
+  - docker info
+  - usermod -aG docker $USER  # Add the current user to the docker group
+  - newgrp docker  # Activate the changes to the group membership
 
-build:
+build_image:
   stage: build
   script:
-    - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_NAMESPACE/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .
+    - docker build -t my-python-app .
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE
 
-deploy:
+deploy_app:
   stage: deploy
   script:
-    - sudo docker run -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm $DOCKER_REGISTRY/$CI_PROJECT_NAMESPACE/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker pull $CI_REGISTRY_IMAGE
+    - docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm $CI_REGISTRY_IMAGE
