@@ -53,3 +53,53 @@ deploy_app:
   script:
     - docker pull $CI_REGISTRY_IMAGE
     - docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm $CI_REGISTRY_IMAGE
+-----
+
+import time
+import math
+import curses
+
+def main(stdscr):
+    curses.curs_set(0)
+    stdscr.timeout(100)
+
+    height, width = stdscr.getmaxyx()
+    y = 10  # начальная высота
+    x = width // 2  # середина экрана
+
+    # Фон и шар
+    nebo_img = [[' ' for _ in range(width)] for _ in range(height)]
+    shar_img = [
+        '         @         ',
+        '        / \\        ',
+        '       /___\\       ',
+        '      |     |      ',
+        '      |     |      ',
+        '     |_____|      '
+    ]
+
+    while True:
+        stdscr.clear()
+
+        # Отрисовка фона
+        for i, row in enumerate(nebo_img):
+            stdscr.addstr(i, 0, ''.join(row))
+
+        # Отрисовка шара
+        for i, row in enumerate(shar_img):
+            stdscr.addstr(y + i, x - len(row) // 2, row)
+
+        y += 1
+
+        stdscr.refresh()
+
+        time.sleep(0.1)
+
+        if y >= 500:
+            break
+
+try:
+    curses.wrapper(main)
+except KeyboardInterrupt:
+    pass
+
